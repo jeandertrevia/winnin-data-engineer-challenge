@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: creators
+        description: "Creators resolvidos via YouTube API"
+      - name: posts
+        description: "Videos/posts brutos vindos da YouTube API"

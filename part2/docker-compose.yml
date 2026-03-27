@@ -1,0 +1,75 @@
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.9.0
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__SMTP__SMTP_HOST: smtp.gmail.com
+    AIRFLOW__SMTP__SMTP_PORT: 587
+    AIRFLOW__SMTP__SMTP_STARTTLS: "true"
+    AIRFLOW__SMTP__SMTP_USER: ${SMTP_USER}
+    AIRFLOW__SMTP__SMTP_PASSWORD: ${SMTP_PASSWORD}
+    AIRFLOW__SMTP__SMTP_MAIL_FROM: ${SMTP_USER}
+    YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: 5432
+    POSTGRES_DB: creators_db
+    POSTGRES_USER: airflow
+    POSTGRES_PASSWORD: airflow
+    AIRFLOW_ADMIN_EMAIL: ${AIRFLOW_ADMIN_EMAIL}
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./extraction:/opt/airflow/extraction
+    - ./dbt:/opt/airflow/dbt
+    - ./docker:/opt/airflow/docker
+    - airflow_logs:/opt/airflow/logs
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  airflow-init:
+    <<: *airflow-common
+    command: bash -c "pip install -r /opt/airflow/docker/airflow-requirements.txt --quiet && airflow db migrate && airflow users create --username admin --password admin --firstname Admin --lastname Admin --role Admin --email $$AIRFLOW_ADMIN_EMAIL"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./extraction:/opt/airflow/extraction
+      - ./dbt:/opt/airflow/dbt
+      - ./docker:/opt/airflow/docker
+      - airflow_logs:/opt/airflow/logs
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: bash -c "pip install -r /opt/airflow/docker/airflow-requirements.txt --quiet && airflow webserver"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      retries: 5
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: bash -c "pip install -r /opt/airflow/docker/airflow-requirements.txt --quiet && airflow scheduler"
+
+volumes:
+  postgres_data:
+  airflow_logs:

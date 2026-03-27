@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: mart_top_posts_likes
+    description: "Top 3 posts por likes de cada creator"
+    columns:
+      - name: handle
+        tests:
+          - not_null
+      - name: rank
+        tests:
+          - not_null
+
+  - name: mart_top_posts_views
+    description: "Top 3 posts por views de cada creator"
+    columns:
+      - name: handle
+        tests:
+          - not_null
+      - name: rank
+        tests:
+          - not_null
+
+  - name: mart_pubs_por_mes
+    description: "Quantidade de publicacoes por mes de cada creator, com 0 nos meses sem video"
+    columns:
+      - name: handle
+        tests:
+          - not_null
+      - name: year_month
+        tests:
+          - not_null
+      - name: publicacoes
+        tests:
+          - not_null
+
+  - name: mart_top_tags
+    description: "Top 3 tags mais usadas por creator"
+    columns:
+      - name: handle
+        tests:
+          - not_null
+      - name: tag
+        tests:
+          - not_null

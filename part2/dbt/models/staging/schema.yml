@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_creators
+    description: "Creators resolvidos via YouTube API"
+    columns:
+      - name: channel_id
+        description: "ID unico do canal no YouTube"
+        tests:
+          - unique
+          - not_null
+      - name: handle
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_posts
+    description: "Videos brutos vindos da YouTube API"
+    columns:
+      - name: video_id
+        tests:
+          - unique
+          - not_null
+      - name: channel_id
+        tests:
+          - not_null
+      - name: published_at
+        tests:
+          - not_null
+      - name: views
+        tests:
+          - not_null
+      - name: likes
+        tests:
+          - not_null

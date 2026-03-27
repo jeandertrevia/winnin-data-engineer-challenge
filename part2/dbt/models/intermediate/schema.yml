@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: int_creators_posts
+    description: "Join entre creators e posts"
+    columns:
+      - name: video_id
+        tests:
+          - unique
+          - not_null
+      - name: handle
+        tests:
+          - not_null
+      - name: views
+        tests:
+          - not_null
+      - name: likes
+        tests:
+          - not_null

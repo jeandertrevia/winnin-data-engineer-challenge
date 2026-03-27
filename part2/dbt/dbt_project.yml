@@ -1,0 +1,19 @@
+name: creators_pipeline
+version: "1.0.0"
+profile: creators_pipeline
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  creators_pipeline:
+    staging:
+      schema: staging
+      materialized: view
+    intermediate:
+      schema: intermediate
+      materialized: view
+    mart:
+      schema: mart
+      materialized: table
