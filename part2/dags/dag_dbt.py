@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.utils.email import send_email
 
-ADMIN_EMAIL = os.getenv("AIRFLOW_ADMIN_EMAIL", "jeandercarneiro@gmail.com")
+ADMIN_EMAIL = os.getenv("AIRFLOW_ADMIN_EMAIL")
 DBT_DIR = "/opt/airflow/dbt"
 
 
