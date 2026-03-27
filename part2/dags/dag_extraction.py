@@ -10,7 +10,7 @@ from airflow.utils.email import send_email
 sys.path.insert(0, "/opt/airflow/extraction")
 from extract_and_load import run as run_extraction
 
-ADMIN_EMAIL = os.getenv("AIRFLOW_ADMIN_EMAIL", "jeandercarneiro@gmail.com")
+ADMIN_EMAIL = os.getenv("AIRFLOW_ADMIN_EMAIL")
 
 
 def on_failure(context):
